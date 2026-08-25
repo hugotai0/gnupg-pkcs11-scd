@@ -31,7 +31,9 @@
 #include "common.h"
 #include <ctype.h>
 #include "encoding.h"
-
+#if defined(HAVE_W32_SYSTEM)
+#include <time.h>
+#endif
 /* p_target must be free () */
 
 int
