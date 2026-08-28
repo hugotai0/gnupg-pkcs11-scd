@@ -29,6 +29,13 @@ jobs:
             make
             libtool
             m4
+      - name: Debug environment
+        run: |
+          autoconf --version
+          automake --version
+          aclocal --version
+          bash --version
+          pacman -Q autoconf automake m4 pkgconf
 
       - name: Generate
         run: autoreconf -ivf
