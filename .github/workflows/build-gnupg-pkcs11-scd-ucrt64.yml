@@ -1,0 +1,53 @@
+name: MSYS2
+
+on: [push, pull_request]
+
+jobs:
+  msys2-ucrt64:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-pkcs11-helper
+            mingw-w64-ucrt-x86_64-libassuan
+            mingw-w64-ucrt-x86_64-libgcrypt
+            mingw-w64-ucrt-x86_64-gcc
+            man2html
+            autoconf
+            automake
+            pkgconf
+            make
+            libtool
+            m4
+
+      - name: Generate
+        run: autoreconf -ivf
+
+      - name: Configure
+        run: ./configure --enable-strict --enable-pedantic
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gnupg-pkcs11-scd-ucrt64
+          path: |
+            gnupg-pkcs11-scd/gnupg-pkcs11-scd.*
+            /ucrt64/bin/libassuan-0.dll
+            /ucrt64/bin/libgpg-error-0.dll
+            /ucrt64/bin/libgcrypt-20.dll
+            /ucrt64/bin/libcrypto-3-x64.dll
+            /ucrt64/bin/libpkcs11-helper-1.dll
+            /ucrt64/bin/zlib1.dll
